@@ -1,0 +1,1 @@
+web: python bot_tg.py
