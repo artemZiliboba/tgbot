@@ -6,10 +6,10 @@ import socket
 import os
 
 TOKEN = str(os.environ.get('BOT_TOKEN'))
-PROFILE = os.environ.get('PROFILE')
-CHAT_ID = os.environ.get('CHAT_ID')
-INSTA_LOGIN = os.environ.get('INSTA_LOGIN')
-INSTA_PASS = os.environ.get('INSTA_PASS')
+PROFILE = str(os.environ.get('PROFILE'))
+CHAT_ID = str(os.environ.get('CHAT_ID'))
+INSTA_LOGIN = str(os.environ.get('INSTA_LOGIN'))
+INSTA_PASS = str(os.environ.get('INSTA_PASS'))
 
 bot = telebot.TeleBot(TOKEN)
 
