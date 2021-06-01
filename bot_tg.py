@@ -8,6 +8,7 @@ import os
 TOKEN = str(os.environ.get('BOT_TOKEN'))
 PROFILE = str(os.environ.get('PROFILE'))
 CHAT_ID = str(os.environ.get('CHAT_ID'))
+LOGIN_AUTH = os.environ.get('LOGIN_AUTH')
 INSTA_LOGIN = str(os.environ.get('INSTA_LOGIN'))
 INSTA_PASS = str(os.environ.get('INSTA_PASS'))
 
@@ -22,7 +23,9 @@ def start(message):
 
 def insta(message):
     loader = Instaloader()
-    loader.login(INSTA_LOGIN, INSTA_PASS)
+    print('LOGIN_AUTH = ' + LOGIN_AUTH)
+    if LOGIN_AUTH == '1':
+        loader.login(INSTA_LOGIN, INSTA_PASS)
     list_post = {}
     posts = Profile.from_username(loader.context, PROFILE).get_posts()
 
