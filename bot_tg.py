@@ -6,8 +6,10 @@ import socket
 import os
 
 TOKEN = str(os.environ.get('BOT_TOKEN'))
-PROFILE = 'cauvarjao'
+PROFILE = os.environ.get('PROFILE')
 CHAT_ID = os.environ.get('CHAT_ID')
+INSTA_LOGIN = os.environ.get('INSTA_LOGIN')
+INSTA_PASS = os.environ.get('INSTA_PASS')
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -20,6 +22,7 @@ def start(message):
 
 def insta(message):
     loader = Instaloader()
+    loader.login(INSTA_LOGIN, INSTA_PASS)
     list_post = {}
     posts = Profile.from_username(loader.context, PROFILE).get_posts()
 
