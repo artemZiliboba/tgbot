@@ -1,6 +1,7 @@
 from instaloader import Instaloader, Profile
 from datetime import datetime
 from itertools import dropwhile, takewhile
+from urllib.parse import urlparse
 import telebot
 import socket
 import os
@@ -19,6 +20,12 @@ bot = telebot.TeleBot(TOKEN)
 def start(message):
     sent = bot.send_message(CHAT_ID, 'Hi, boss')
     bot.register_next_step_handler(sent, insta)
+
+
+@bot.message_handler(commands=['get'])
+def start(message):
+    sent = bot.send_message(CHAT_ID, 'Get me URL profile')
+    bot.register_next_step_handler(sent, top)
 
 
 def insta(message):
@@ -49,6 +56,27 @@ def state(message):
                             + '\nBOT_TOKEN: ' + str(os.environ.get('BOT_TOKEN'))
                             + '\nCHAT_ID : ' + str(os.environ.get('CHAT_ID'))
                             )
+
+
+@bot.message_handler(commands=['top'])
+def top(message):
+    loader = Instaloader()
+    if LOGIN_AUTH == '1':
+        loader.login(INSTA_LOGIN, INSTA_PASS)
+    list_post = {}
+    o = urlparse(message.text)
+    posts = Profile.from_username(loader.context, o.path.replace('/', '')).get_posts()
+
+    since = datetime.today()
+    until = datetime(2021, 3, 1)
+
+    for post in takewhile(lambda p: p.date > until, dropwhile(lambda p: p.date > since, posts)):
+        list_post[post.likes] = post.url
+
+    print('MAX likes is post : {} : {}'.format(str(max(list_post.keys())), str(list_post.get(max(list_post.keys())))))
+    bot.send_photo(CHAT_ID, str(list_post.get(max(list_post.keys()))),
+                   'L | ' + str(max(list_post.keys())) + '\n' +
+                   'P | ' + PROFILE)
 
 
 bot.polling(none_stop=True)
