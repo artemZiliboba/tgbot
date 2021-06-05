@@ -31,7 +31,7 @@ def start(message):
 def insta(message):
     loader = Instaloader()
     print('LOGIN_AUTH = ' + LOGIN_AUTH)
-    if LOGIN_AUTH == '1':
+    if LOGIN_AUTH != '1':
         loader.login(INSTA_LOGIN, INSTA_PASS)
     list_post = {}
     posts = Profile.from_username(loader.context, PROFILE).get_posts()
@@ -61,14 +61,15 @@ def state(message):
 @bot.message_handler(commands=['top'])
 def top(message):
     loader = Instaloader()
-    if LOGIN_AUTH == '1':
-        loader.login(INSTA_LOGIN, INSTA_PASS)
+    if LOGIN_AUTH != '1':
+        # loader.login(INSTA_LOGIN, INSTA_PASS)
+        loader.load_session_from_file('tilibobia')
     list_post = {}
     o = urlparse(message.text)
     posts = Profile.from_username(loader.context, o.path.replace('/', '')).get_posts()
 
     since = datetime.today()
-    until = datetime(2021, 3, 1)
+    until = datetime(2020, 4, 1)
 
     for post in takewhile(lambda p: p.date > until, dropwhile(lambda p: p.date > since, posts)):
         list_post[post.likes] = post.url
@@ -76,7 +77,7 @@ def top(message):
     print('MAX likes is post : {} : {}'.format(str(max(list_post.keys())), str(list_post.get(max(list_post.keys())))))
     bot.send_photo(CHAT_ID, str(list_post.get(max(list_post.keys()))),
                    'L | ' + str(max(list_post.keys())) + '\n' +
-                   'P | ' + PROFILE)
+                   'P | ' + o.path.replace('/', ''))
 
 
 bot.polling(none_stop=True)
