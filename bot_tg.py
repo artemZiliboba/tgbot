@@ -52,18 +52,16 @@ def insta(message):
 def state(message):
     hostname = socket.gethostname()
     local_ip = socket.gethostbyname(hostname)
-    sent = bot.send_message(CHAT_ID, 'IP : ' + local_ip
-                            + '\nBOT_TOKEN: ' + str(os.environ.get('BOT_TOKEN'))
-                            + '\nCHAT_ID : ' + str(os.environ.get('CHAT_ID'))
-                            )
+    bot.send_message(CHAT_ID, 'IP : ' + local_ip
+                     + '\nBOT_TOKEN: ' + str(os.environ.get('BOT_TOKEN'))
+                     + '\nCHAT_ID : ' + str(os.environ.get('CHAT_ID'))
+                     )
 
 
-@bot.message_handler(commands=['top'])
 def top(message):
     loader = Instaloader()
     if LOGIN_AUTH != '1':
-        # loader.login(INSTA_LOGIN, INSTA_PASS)
-        loader.load_session_from_file('tilibobia')
+        loader.login(INSTA_LOGIN, INSTA_PASS)
     list_post = {}
     o = urlparse(message.text)
     posts = Profile.from_username(loader.context, o.path.replace('/', '')).get_posts()
