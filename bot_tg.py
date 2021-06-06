@@ -39,11 +39,17 @@ def insta(message):
 
     since = datetime.today()
     until = datetime(2021, 3, 1)
+    count = 0
 
     for post in takewhile(lambda p: p.date > until, dropwhile(lambda p: p.date > since, posts)):
-        print(str(datetime.now()) + ' → ' + post.url)
+        print(str(str(count) + '→' + datetime.now()) + ' → ' + post.url)
         list_post[post.likes] = post.url
-        time.sleep(3)
+        # time.sleep(3)
+        count = count + 1
+        if count == 9:
+            loader.login(INSTA_LOGIN, INSTA_PASS)
+            count = 0
+            print('New login. Count is ' + str(count))
 
     print('MAX likes is post : {} : {}'.format(str(max(list_post.keys())), str(list_post.get(max(list_post.keys())))))
     bot.send_photo(CHAT_ID, str(list_post.get(max(list_post.keys()))),
