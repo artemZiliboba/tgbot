@@ -40,6 +40,7 @@ def insta(message):
     until = datetime(2021, 3, 1)
 
     for post in takewhile(lambda p: p.date > until, dropwhile(lambda p: p.date > since, posts)):
+        print(post.url)
         list_post[post.likes] = post.url
 
     print('MAX likes is post : {} : {}'.format(str(max(list_post.keys())), str(list_post.get(max(list_post.keys())))))
