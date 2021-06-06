@@ -42,7 +42,7 @@ def insta(message):
     count = 0
 
     for post in takewhile(lambda p: p.date > until, dropwhile(lambda p: p.date > since, posts)):
-        print(str(str(count) + '→' + datetime.now()) + ' → ' + post.url)
+        print(str(count) + ' → ' + post.url)
         list_post[post.likes] = post.url
         # time.sleep(3)
         count = count + 1
