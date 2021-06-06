@@ -44,7 +44,7 @@ def insta(message):
     for post in takewhile(lambda p: p.date > until, dropwhile(lambda p: p.date > since, posts)):
         print(str(count) + ' → ' + post.url)
         list_post[post.likes] = post.url
-        # time.sleep(3)
+        time.sleep(3)
         count = count + 1
         if count == 9:
             loader.login(INSTA_LOGIN, INSTA_PASS)
