@@ -2,6 +2,7 @@ from instaloader import Instaloader, Profile
 from datetime import datetime
 from itertools import dropwhile, takewhile
 from urllib.parse import urlparse
+import time
 import telebot
 import socket
 import os
@@ -40,8 +41,9 @@ def insta(message):
     until = datetime(2021, 3, 1)
 
     for post in takewhile(lambda p: p.date > until, dropwhile(lambda p: p.date > since, posts)):
-        print(post.url)
+        print(str(datetime.now()) + ' → ' + post.url)
         list_post[post.likes] = post.url
+        time.sleep(3)
 
     print('MAX likes is post : {} : {}'.format(str(max(list_post.keys())), str(list_post.get(max(list_post.keys())))))
     bot.send_photo(CHAT_ID, str(list_post.get(max(list_post.keys()))),
