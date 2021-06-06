@@ -31,7 +31,7 @@ def start(message):
 def insta(message):
     loader = Instaloader()
     print('LOGIN_AUTH = ' + LOGIN_AUTH)
-    if LOGIN_AUTH != '1':
+    if LOGIN_AUTH == '1':
         loader.login(INSTA_LOGIN, INSTA_PASS)
     list_post = {}
     posts = Profile.from_username(loader.context, PROFILE).get_posts()
@@ -60,7 +60,7 @@ def state(message):
 
 def top(message):
     loader = Instaloader()
-    if LOGIN_AUTH != '1':
+    if LOGIN_AUTH == '1':
         loader.login(INSTA_LOGIN, INSTA_PASS)
     list_post = {}
     o = urlparse(message.text)
