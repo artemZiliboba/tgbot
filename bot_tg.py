@@ -6,6 +6,7 @@ import time
 import telebot
 import socket
 import os
+from db_data import get_db_data
 
 TOKEN = str(os.environ.get('BOT_TOKEN'))
 PROFILE = str(os.environ.get('PROFILE'))
@@ -85,6 +86,13 @@ def top(message):
     bot.send_photo(CHAT_ID, str(list_post.get(max(list_post.keys()))),
                    'L | ' + str(max(list_post.keys())) + '\n' +
                    'P | ' + o.path.replace('/', ''))
+
+
+@bot.message_handler(commands=['db'])
+def desc_car(message):
+    car_info = get_db_data(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
+                           os.environ.get('DB_HOST'), os.environ.get('DB_PORT'))
+    bot.send_message(CHAT_ID, str(car_info), parse_mode='Markdown')
 
 
 bot.polling(none_stop=True)
