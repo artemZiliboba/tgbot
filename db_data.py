@@ -20,10 +20,10 @@ def get_db_data(db, db_user, db_pass, db_host, db_port):
 
         for row in rec:
             head = "*" + row[0] + "*" + "\n\n"
-            length = "Длина:\t" + str_to_int(row[1])
-            width = "Ширина:\t" + str_to_int(row[2])
-            height = "Высота:\t" + str_to_int(row[3])
-            mass = "Масса:\t" + str_to_int(row[4])
+            length = "Д:\t" + str_to_int(row[1])
+            width = "Ш:\t" + str_to_int(row[2])
+            height = "В:\t" + str_to_int(row[3])
+            mass = "М:\t" + str_to_int(row[4])
             all_details = length + width + height + mass
             return head + all_details + "\n\n" + row[5]
     # cur = con.cursor().execute("select cd.label, cd.length from car_detail cd where cd.label like '%tesla%'")
