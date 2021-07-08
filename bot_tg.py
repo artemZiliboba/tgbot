@@ -7,6 +7,7 @@ import telebot
 import socket
 import os
 from db_data import get_db_data
+from db_data import get_tags
 
 TOKEN = str(os.environ.get('BOT_TOKEN'))
 PROFILE = str(os.environ.get('PROFILE'))
@@ -93,6 +94,19 @@ def desc_car(message):
     car_info = get_db_data(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
                            os.environ.get('DB_HOST'), os.environ.get('DB_PORT'))
     bot.send_message(CHAT_ID, str(car_info), parse_mode='Markdown')
+
+    tags = get_tags(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
+                    os.environ.get('DB_HOST'), os.environ.get('DB_PORT'))
+    label_hashtag = label_tag(car_info)
+
+    bot.send_message(CHAT_ID, str(tags) + label_hashtag, parse_mode='Markdown')
+
+
+def label_tag(desc):
+    label = desc.split('\n', 1)[0]
+    label = label.split(' ', 1)[0]
+    label = label.replace('*', '')
+    return '#' + label.lower()
 
 
 bot.polling(none_stop=True)
