@@ -1,13 +1,16 @@
-from instaloader import Instaloader, Profile
+import os
+import socket
+import time
 from datetime import datetime
 from itertools import dropwhile, takewhile
 from urllib.parse import urlparse
-import time
+
 import telebot
-import socket
-import os
+from instaloader import Instaloader, Profile
+
 from db_data import get_db_data
 from db_data import get_tags
+from yd_data import get_images
 
 TOKEN = str(os.environ.get('BOT_TOKEN'))
 PROFILE = str(os.environ.get('PROFILE'))
@@ -93,12 +96,13 @@ def top(message):
 def desc_car(message):
     car_info = get_db_data(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
                            os.environ.get('DB_HOST'), os.environ.get('DB_PORT'))
-    bot.send_message(CHAT_ID, str(car_info), parse_mode='Markdown')
+    bot.send_message(CHAT_ID, str(car_info) + "\n\n🏎📷⤵️", parse_mode='Markdown')
+    bot.send_media_group(CHAT_ID, media=get_images(os.environ.get('YD_TOKEN'), "Infiniti G35 COUPE '06"),
+                         disable_notification=None)
 
     tags = get_tags(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
                     os.environ.get('DB_HOST'), os.environ.get('DB_PORT'))
     label_hashtag = label_tag(car_info)
-
     bot.send_message(CHAT_ID, str(tags) + label_hashtag, parse_mode='Markdown')
 
 
@@ -107,6 +111,12 @@ def label_tag(desc):
     label = label.split(' ', 1)[0]
     label = label.replace('*', '')
     return '#' + label.lower()
+
+
+@bot.message_handler(commands=['img'])
+def load_images(car_label):
+    bot.send_media_group(CHAT_ID, media=get_images(os.environ.get('YD_TOKEN'), "Infiniti G35 COUPE '06"),
+                         disable_notification=None)
 
 
 bot.polling(none_stop=True)

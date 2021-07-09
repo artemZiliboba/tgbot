@@ -1,12 +1,4 @@
-certifi==2020.12.5
-chardet==4.0.0
-idna==2.10
 instaloader==4.7.1
-numpy==1.20.3
-opencv-python==4.5.2.54
-Pillow==8.2.0
 psycopg2==2.9.1
 pyTelegramBotAPI==3.7.7
-pytesseract==0.3.7
-requests==2.25.1
-urllib3==1.26.4
+yadisk~=1.2.14
