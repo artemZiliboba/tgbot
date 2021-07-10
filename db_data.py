@@ -14,12 +14,12 @@ def get_db_data(db, db_user, db_pass, db_host, db_port):
         cursor = con.cursor()
         select = "select cn.grade, cd2.length, cd2.width, cd2.height, cd2.mass, cd.c_desc from car_name cn join " \
                  "cars_desc cd on cn.label = cd.label join car_detail cd2 on cn.label = rtrim(substring(cd2.label, 4)," \
-                 "'_a')  order by random() limit 1"
+                 "'_a')  where cn.images_yn = 'Y' order by random() limit 1"  # and cn.publish_yn = 'N'
         cursor.execute(select)
         rec = cursor.fetchall()
 
         for row in rec:
-            head = "*" + row[0] + "*" + "\n"
+            head = "*" + row[0] + "*\n" + hash_tag(row[0]) + "\n"
             length = str_to_int(row[1]) + " → длина"
             width = str_to_int(row[2]) + " → ширина"
             height = str_to_int(row[3]) + " → высота"
@@ -63,3 +63,31 @@ def get_tags(db, db_user, db_pass, db_host, db_port):
             cursor.close()
             con.close()
             print("Connection was closed")
+
+
+def hash_tag(row):
+    label = row.split('\n', 1)[0]
+    label = label.split(' ', 1)[0]
+    return '#' + label.lower()
+
+
+def update_publish_yn(db, db_user, db_pass, db_host, db_port, grade):
+    try:
+        con = psycopg2.connect(
+            database=db,
+            user=db_user,
+            password=db_pass,
+            host=db_host,
+            port=db_port,
+        )
+        cursor = con.cursor()
+        grade = grade.replace("'", "''")
+        sql = "update car_name set publish_yn = 'Y' where grade = '" + grade + "'"
+        print(sql)
+        cursor.execute(sql)
+        con.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if con is not None:
+            con.close()

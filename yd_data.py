@@ -9,7 +9,6 @@ def get_images(auth_token, str_path):
     fields = [("photo", i.file) for i in y.listdir(path, fields=["media_type", "file"])]
 
     for n, item in fields:
-        print(n, item)
         medias.append(InputMediaPhoto(media=item, caption=None))
 
     return medias

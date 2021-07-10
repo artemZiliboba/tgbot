@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 import telebot
 from instaloader import Instaloader, Profile
 
-from db_data import get_db_data
+from db_data import get_db_data, update_publish_yn
 from db_data import get_tags
 from yd_data import get_images
 
@@ -96,14 +96,16 @@ def top(message):
 def desc_car(message):
     car_info = get_db_data(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
                            os.environ.get('DB_HOST'), os.environ.get('DB_PORT'))
+    label_hashtag = label_tag(car_info)
     bot.send_message(CHAT_ID, str(car_info) + "\n\n🏎📷⤵️", parse_mode='Markdown')
-    bot.send_media_group(CHAT_ID, media=get_images(os.environ.get('YD_TOKEN'), "Infiniti G35 COUPE '06"),
+    bot.send_media_group(CHAT_ID, media=get_images(os.environ.get('YD_TOKEN'), yd_path(car_info)),
                          disable_notification=None)
 
     tags = get_tags(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
                     os.environ.get('DB_HOST'), os.environ.get('DB_PORT'))
-    label_hashtag = label_tag(car_info)
-    bot.send_message(CHAT_ID, str(tags) + label_hashtag, parse_mode='Markdown')
+    bot.send_message(CHAT_ID, str(tags) + " " + label_hashtag, parse_mode='Markdown')
+    update_publish_yn(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
+                      os.environ.get('DB_HOST'), os.environ.get('DB_PORT'), yd_path(car_info))
 
 
 def label_tag(desc):
@@ -111,6 +113,12 @@ def label_tag(desc):
     label = label.split(' ', 1)[0]
     label = label.replace('*', '')
     return '#' + label.lower()
+
+
+def yd_path(desc):
+    label = desc.split('\n', 1)[0]
+    label = label.replace('*', '')
+    return label
 
 
 @bot.message_handler(commands=['img'])
