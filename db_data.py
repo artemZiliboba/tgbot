@@ -14,7 +14,8 @@ def get_db_data(db, db_user, db_pass, db_host, db_port, tag):
         cursor = con.cursor()
         select = "select cn.grade, cd2.length, cd2.width, cd2.height, cd2.mass, cd.c_desc from car_name cn join " \
                  "cars_desc cd on cn.label = cd.label join car_detail cd2 on cn.label = rtrim(substring(cd2.label, 4)," \
-                 "'_a')  where cn.images_yn = 'Y' order by random() limit 1"  # order by random() limit 1 #and cn.publish_yn = 'N'
+                 "'_a')  where cn.images_yn = 'Y' and cn.publish_yn = 'N' order by random() limit 1"
+        # order by random() limit 1 #and cn.publish_yn = 'N'
         cursor.execute(select)
         rec = cursor.fetchall()
 
