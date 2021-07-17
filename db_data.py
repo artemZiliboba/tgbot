@@ -2,7 +2,7 @@ import psycopg2
 from psycopg2 import Error
 
 
-def get_db_data(db, db_user, db_pass, db_host, db_port):
+def get_db_data(db, db_user, db_pass, db_host, db_port, tag):
     try:
         con = psycopg2.connect(
             database=db,
@@ -14,19 +14,18 @@ def get_db_data(db, db_user, db_pass, db_host, db_port):
         cursor = con.cursor()
         select = "select cn.grade, cd2.length, cd2.width, cd2.height, cd2.mass, cd.c_desc from car_name cn join " \
                  "cars_desc cd on cn.label = cd.label join car_detail cd2 on cn.label = rtrim(substring(cd2.label, 4)," \
-                 "'_a')  where cn.images_yn = 'Y' and cn.publish_yn = 'N'"  # order by random() limit 1
+                 "'_a')  where cn.images_yn = 'Y' order by random() limit 1"  # order by random() limit 1 #and cn.publish_yn = 'N'
         cursor.execute(select)
         rec = cursor.fetchall()
 
         for row in rec:
-            head = "*" + row[0] + "*\n" + hash_tag(row[0]) + "\n"
+            head = "*" + row[0] + "*\n" + hash_tag(row[0], tag) + "\n"
             length = str_to_int(row[1]) + " → длина"
             width = str_to_int(row[2]) + " → ширина"
             height = str_to_int(row[3]) + " → высота"
             mass = str_to_int(row[4]) + " → масса"
             all_details = "`" + length + width + height + mass + "`"
             return head + all_details + "\n\n" + row[5]
-    # cur = con.cursor().execute("select cd.label, cd.length from car_detail cd where cd.label like '%tesla%'")
     except (Exception, Error) as error:
         print("Error with work Postgre : ", error)
     finally:
@@ -65,10 +64,12 @@ def get_tags(db, db_user, db_pass, db_host, db_port):
             print("Connection was closed")
 
 
-def hash_tag(row):
-    label = row.split('\n', 1)[0]
-    label = label.split(' ', 1)[0]
-    return '#' + label.lower()
+def hash_tag(row, tag):
+    if tag == 0:
+        label = row.split('\n', 1)[0]
+        label = label.split(' ', 1)[0]
+        return '#' + label.lower()
+    return ''
 
 
 def update_publish_yn(db, db_user, db_pass, db_host, db_port, grade):

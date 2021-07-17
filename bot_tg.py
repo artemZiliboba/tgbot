@@ -1,12 +1,7 @@
 import os
 import socket
-import time
-from datetime import datetime
-from itertools import dropwhile, takewhile
-from urllib.parse import urlparse
 
 import telebot
-from instaloader import Instaloader, Profile
 
 from db_data import get_db_data, update_publish_yn
 from db_data import get_tags
@@ -15,51 +10,19 @@ from yd_data import get_images
 TOKEN = str(os.environ.get('BOT_TOKEN'))
 PROFILE = str(os.environ.get('PROFILE'))
 CHAT_ID = str(os.environ.get('CHAT_ID'))
-LOGIN_AUTH = os.environ.get('LOGIN_AUTH')
-INSTA_LOGIN = str(os.environ.get('INSTA_LOGIN'))
-INSTA_PASS = str(os.environ.get('INSTA_PASS'))
+CHANNEL_ID = str(os.environ.get('CHANNEL_ID'))
 
 bot = telebot.TeleBot(TOKEN)
 
 
+@bot.message_handler(commands=['check'])
+def check(message):
+    desc_car(1, CHAT_ID)
+
+
 @bot.message_handler(commands=['start'])
 def start(message):
-    sent = bot.send_message(CHAT_ID, 'Hi, boss')
-    bot.register_next_step_handler(sent, insta)
-
-
-@bot.message_handler(commands=['get'])
-def start(message):
-    sent = bot.send_message(CHAT_ID, 'Get me URL profile')
-    bot.register_next_step_handler(sent, top)
-
-
-def insta(message):
-    loader = Instaloader()
-    print('LOGIN_AUTH = ' + LOGIN_AUTH)
-    if LOGIN_AUTH == '1':
-        loader.login(INSTA_LOGIN, INSTA_PASS)
-    list_post = {}
-    posts = Profile.from_username(loader.context, PROFILE).get_posts()
-
-    since = datetime.today()
-    until = datetime(2021, 3, 1)
-    count = 0
-
-    for post in takewhile(lambda p: p.date > until, dropwhile(lambda p: p.date > since, posts)):
-        print(str(count) + ' → ' + post.url)
-        list_post[post.likes] = post.url
-        time.sleep(3)
-        count = count + 1
-        if count == 9:
-            loader.login(INSTA_LOGIN, INSTA_PASS)
-            count = 0
-            print('New login. Count is ' + str(count))
-
-    print('MAX likes is post : {} : {}'.format(str(max(list_post.keys())), str(list_post.get(max(list_post.keys())))))
-    bot.send_photo(CHAT_ID, str(list_post.get(max(list_post.keys()))),
-                   'L | ' + str(max(list_post.keys())) + '\n' +
-                   'P | ' + PROFILE)
+    bot.send_message(CHAT_ID, 'Hi, boss')
 
 
 @bot.message_handler(commands=['status'])
@@ -72,40 +35,17 @@ def state(message):
                      )
 
 
-def top(message):
-    loader = Instaloader()
-    if LOGIN_AUTH == '1':
-        loader.login(INSTA_LOGIN, INSTA_PASS)
-    list_post = {}
-    o = urlparse(message.text)
-    posts = Profile.from_username(loader.context, o.path.replace('/', '')).get_posts()
-
-    since = datetime.today()
-    until = datetime(2020, 4, 1)
-
-    for post in takewhile(lambda p: p.date > until, dropwhile(lambda p: p.date > since, posts)):
-        list_post[post.likes] = post.url
-
-    print('MAX likes is post : {} : {}'.format(str(max(list_post.keys())), str(list_post.get(max(list_post.keys())))))
-    bot.send_photo(CHAT_ID, str(list_post.get(max(list_post.keys()))),
-                   'L | ' + str(max(list_post.keys())) + '\n' +
-                   'P | ' + o.path.replace('/', ''))
-
-
-@bot.message_handler(commands=['db'])
-def desc_car(message):
+def desc_car(hash_tag, chat_to):
     car_info = get_db_data(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
-                           os.environ.get('DB_HOST'), os.environ.get('DB_PORT'))
+                           os.environ.get('DB_HOST'), os.environ.get('DB_PORT'), hash_tag)
     label_hashtag = label_tag(car_info)
-    bot.send_message(CHAT_ID, str(car_info) + "\n\n🏎📷⤵️", parse_mode='Markdown')
-    bot.send_media_group(CHAT_ID, media=get_images(os.environ.get('YD_TOKEN'), yd_path(car_info)),
+    bot.send_message(chat_to, str(car_info) + "\n\n🏎📷⤵️", parse_mode='Markdown')
+    bot.send_media_group(chat_to, media=get_images(os.environ.get('YD_TOKEN'), yd_path(car_info)),
                          disable_notification=None)
 
     tags = get_tags(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
                     os.environ.get('DB_HOST'), os.environ.get('DB_PORT'))
-    bot.send_message(CHAT_ID, str(tags) + " " + label_hashtag, parse_mode='Markdown')
-    update_publish_yn(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
-                      os.environ.get('DB_HOST'), os.environ.get('DB_PORT'), yd_path(car_info))
+    bot.send_message(chat_to, str(tags) + " " + label_hashtag, parse_mode='Markdown')
 
 
 def label_tag(desc):
@@ -125,6 +65,12 @@ def yd_path(desc):
 def load_images(car_label):
     bot.send_media_group(CHAT_ID, media=get_images(os.environ.get('YD_TOKEN'), "Infiniti G35 COUPE '06"),
                          disable_notification=None)
+
+
+@bot.message_handler(commands=['prom'])
+def publish(message):
+    print('Input text:', message.text)
+    desc_car(0, CHANNEL_ID)
 
 
 bot.polling(none_stop=True)
