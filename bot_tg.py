@@ -17,7 +17,7 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['check'])
 def check(message):
-    desc_car(0, CHAT_ID)
+    desc_car(1, CHAT_ID)
 
 
 @bot.message_handler(commands=['start'])
@@ -45,7 +45,8 @@ def desc_car(hash_tag, chat_to):
 
     tags = get_tags(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
                     os.environ.get('DB_HOST'), os.environ.get('DB_PORT'))
-    bot.send_message(chat_to, str(tags) + " " + label_hashtag, parse_mode='Markdown')
+    if hash_tag == 1:
+        bot.send_message(chat_to, str(tags) + " " + label_hashtag, parse_mode='Markdown')
 
 
 def label_tag(desc):
@@ -70,7 +71,7 @@ def load_images(car_label):
 @bot.message_handler(commands=['prom'])
 def publish(message):
     print('Input text:', message.text)
-    desc_car(1, CHANNEL_ID)
+    desc_car(0, CHANNEL_ID)
 
 
 bot.polling(none_stop=True)
