@@ -17,7 +17,7 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['check'])
 def check(message):
-    desc_car(1, CHAT_ID)
+    desc_car(0, CHAT_ID)
 
 
 @bot.message_handler(commands=['start'])
@@ -70,7 +70,7 @@ def load_images(car_label):
 @bot.message_handler(commands=['prom'])
 def publish(message):
     print('Input text:', message.text)
-    desc_car(0, CHANNEL_ID)
+    desc_car(1, CHANNEL_ID)
 
 
 bot.polling(none_stop=True)
