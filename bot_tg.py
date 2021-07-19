@@ -47,6 +47,9 @@ def desc_car(hash_tag, chat_to):
                     os.environ.get('DB_HOST'), os.environ.get('DB_PORT'))
     if hash_tag == 1:
         bot.send_message(chat_to, str(tags) + " " + label_hashtag, parse_mode='Markdown')
+    else:
+        update_publish_yn(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
+                          os.environ.get('DB_HOST'), os.environ.get('DB_PORT'), yd_path(car_info))
 
 
 def label_tag(desc):
