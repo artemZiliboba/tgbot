@@ -1,9 +1,10 @@
 import os
 import socket
+import urllib
 
 import telebot
 
-from db_data import get_db_data, update_publish_yn
+from db_data import get_db_data, update_publish_yn, insert_log
 from db_data import get_tags
 from yd_data import get_images
 
@@ -22,7 +23,17 @@ def check(message):
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(CHAT_ID, 'Hi, boss')
+    if str(message.chat.id) != CHAT_ID:
+        bot.send_message(message.chat.id, 'Sorry, but :')
+        img = open('out.jpg', 'rb')
+        bot.send_photo(message.chat.id, img, caption=None)
+        img.close()
+        bot.send_message(CHAT_ID, 'Strange request from : ' + str(message.chat.id))
+        insert_log(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
+                   os.environ.get('DB_HOST'),
+                   os.environ.get('DB_PORT'), CHAT_ID, message.text)
+    else:
+        bot.send_message(CHAT_ID, 'Hi, boss')
 
 
 @bot.message_handler(commands=['status'])

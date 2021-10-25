@@ -88,8 +88,31 @@ def update_publish_yn(db, db_user, db_pass, db_host, db_port, grade):
         print(sql)
         cursor.execute(sql)
         con.commit()
+        return 'UPDATED GRADE' + grade
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        return error
+    finally:
+        if con is not None:
+            con.close()
+
+
+def insert_log(db, db_user, db_pass, db_host, db_port, chat_id, message):
+    try:
+        con = psycopg2.connect(
+            database=db,
+            user=db_user,
+            password=db_pass,
+            host=db_host,
+            port=db_port,
+        )
+        cursor = con.cursor()
+        sql = "insert into logs_req (CHAT_ID, \"MESSAGE_TXT\") values (" + chat_id + ",'" + message + "')"
+        print(sql)
+        cursor.execute(sql)
+        con.commit()
+        return 'XXX'
+    except (Exception, psycopg2.DatabaseError) as error:
+        return error
     finally:
         if con is not None:
             con.close()
