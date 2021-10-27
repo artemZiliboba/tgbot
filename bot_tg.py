@@ -31,7 +31,7 @@ def start(message):
         bot.send_message(CHAT_ID, 'Strange request from : ' + str(message.chat.id))
         insert_log(os.environ.get('DB'), os.environ.get('DB_USER'), os.environ.get('DB_PASS'),
                    os.environ.get('DB_HOST'),
-                   os.environ.get('DB_PORT'), CHAT_ID, message.text)
+                   os.environ.get('DB_PORT'), CHAT_ID, message.chat.id)
     else:
         bot.send_message(CHAT_ID, 'Hi, boss')
 
