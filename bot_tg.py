@@ -92,7 +92,7 @@ def publish(message):
 def write_media_for_url(message):
     # 0get_photo(message.text)
     try:
-        os.mkdir('test')
+        os.mkdir('test77')
     except FileExistsError as exc:
         bot.send_message(message.chat.id, exc)
         print(exc)
