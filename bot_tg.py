@@ -6,7 +6,7 @@ import telebot
 from db_data import get_db_data, update_publish_yn, insert_log
 from db_data import get_tags
 from yd_data import get_images
-from insta import get_photo
+# from insta import get_photo
 
 TOKEN = str(os.environ.get('BOT_TOKEN'))
 PROFILE = str(os.environ.get('PROFILE'))
@@ -90,14 +90,19 @@ def publish(message):
 
 @bot.message_handler(content_types=['text'])
 def write_media_for_url(message):
-    get_photo(message.text)
-    bot.send_message(message.chat.id, 'загрузка завершена')
-    text = '/photo'
-    path = text.split('/')
-    for root, dirs, files in os.walk(path[1]):
-        for file in files:
-            with open(f'{path[1]}/{file}', 'rb') as obj:
-                bot.send_photo(message.chat.id, obj)
+    # 0get_photo(message.text)
+    try:
+        os.mkdir('test')
+    except FileExistsError as exc:
+        bot.send_message(message.chat.id, exc)
+        print(exc)
+    bot.send_message(message.chat.id, 'test check')
+    # text = '/photo'
+    # path = text.split('/')
+    # for root, dirs, files in os.walk(path[1]):
+    #     for file in files:
+    #         with open(f'{path[1]}/{file}', 'rb') as obj:
+    #             bot.send_photo(message.chat.id, obj)
 
 
 bot.polling(none_stop=True)
