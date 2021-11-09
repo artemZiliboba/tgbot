@@ -51,3 +51,5 @@ wheels/
 *.egg
 /venv/
 /venv/
+/config/
+/photo/
