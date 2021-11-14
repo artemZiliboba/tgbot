@@ -12,7 +12,7 @@ if os.path.isfile(INSTA_CONF):
 else:  # Show an error
     print("[INFO] Config %s not found, continue" % INSTA_CONF)
 instaBot = Bot()
-instaBot.login(username=INSTA_NAME, password=INSTA_PASS)
+instaBot.login(username=INSTA_NAME, password=INSTA_PASS, cookie_fname="false")
 
 
 def get_photo(url):
