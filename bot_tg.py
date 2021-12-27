@@ -8,6 +8,7 @@ from db_data import get_tags
 from yd_data import get_images
 from insta import get_photo
 
+# Static
 TOKEN = str(os.environ.get('BOT_TOKEN'))
 PROFILE = str(os.environ.get('PROFILE'))
 CHAT_ID = str(os.environ.get('CHAT_ID'))
